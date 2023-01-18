@@ -1,0 +1,77 @@
+global proc swgAttrs(){
+    string $sel[]=`ls -sl`;
+    for($each in $sel){
+        string $vNode = `createNode "nurbsCurve" -n ($each+"_swingNode") -p $each`;
+        addAttr -ln "Swing" -nn "-------- SWING" -at "enum" -en "Off:On:"  $each;
+        setAttr -e-keyable true ($each+".Swing");
+        addAttr -ln "range" -at "double" -min 0 -dv 0 $each;
+        setAttr -e-keyable true ($each+".range");
+        addAttr -ln "speed" -at "double" -min 0 -dv 0 $each;
+        setAttr -e-keyable true -cb 1 ($each+".speed");
+        addAttr -ln "offset" -at "double" -dv 0 $each;
+        setAttr -e-keyable true ($each+".offset");
+        addAttr -ln "restPosition" -at "double" -dv 0 $each;
+        setAttr -e-keyable true ($each+".restPosition");
+        addAttr -ln "TxImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".TxImpact");
+        addAttr -ln "TyImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".TyImpact");
+        addAttr -ln "TzImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".TzImpact");
+        addAttr -ln "RxImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".RxImpact");
+        addAttr -ln "RyImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".RyImpact");
+        addAttr -ln "RzImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".RzImpact");
+        //=====================
+        string $swgGrp = `group -em -n ($each+"SWG")`;
+        string $topGrp[] = `listRelatives -p $each`;
+        delete(`parentConstraint $topGrp[0] $swgGrp`);
+        parent $swgGrp $topGrp[0];
+        parent $each $swgGrp;
+        expression -n ($each+"_swing") -o $swgGrp -s ("tx=(((sin((frame+"+$each+".offset)*"+$each+".speed"+""+")*"+$each+".range)+"+$each+".restPosition)*"+$vNode+".TxImpact)*"+$each+".Swing;\n"+
+                                              "ty=(((sin((frame+"+$each+".offset)*"+$each+".speed"+""+")*"+$each+".range)+"+$each+".restPosition)*"+$vNode+".TyImpact)*"+$each+".Swing;\n"+
+                                              "tz=(((sin((frame+"+$each+".offset)*"+$each+".speed"+""+")*"+$each+".range)+"+$each+".restPosition)*"+$vNode+".TzImpact)*"+$each+".Swing;\n"+
+                                              "rx=(((sin((frame+"+$each+".offset)*"+$each+".speed"+""+")*"+$each+".range)+"+$each+".restPosition)*"+$vNode+".RxImpact)*"+$each+".Swing;\n"+
+                                              "ry=(((sin((frame+"+$each+".offset)*"+$each+".speed"+""+")*"+$each+".range)+"+$each+".restPosition)*"+$vNode+".RyImpact)*"+$each+".Swing;\n"+
+                                              "rz=(((sin((frame+"+$each+".offset)*"+$each+".speed"+""+")*"+$each+".range)+"+$each+".restPosition)*"+$vNode+".RzImpact)*"+$each+".Swing;\n");
+    }
+}
+//============================================================================
+global proc vibAttrs(){
+    string $sel[]=`ls -sl`;
+    for($each in $sel){
+        string $vNode = `createNode "nurbsCurve" -n ($each+"_vibrateNode") -p $each`;
+        addAttr -ln "Vibration" -nn "-------- VIBRATION" -at "enum" -en "Off:On:"  $each;
+        setAttr -e-keyable true ($each+".Vibration");
+        addAttr -ln "vMin" -nn "Min" -at "double" -dv -1 $each;
+        setAttr -e-keyable true ($each+".vMin");
+        addAttr -ln "vMax" -nn "Max" -at "double" -dv 1 $each;
+        setAttr -e-keyable true ($each+".vMax");
+        addAttr -ln "TxImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".TxImpact");
+        addAttr -ln "TyImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".TyImpact");
+        addAttr -ln "TzImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".TzImpact");
+        addAttr -ln "RxImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".RxImpact");
+        addAttr -ln "RyImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".RyImpact");
+        addAttr -ln "RzImpact" -at "double" -dv 0 $vNode;
+        setAttr -e-keyable true ($vNode+".RzImpact");
+        //=====================
+        string $vibGrp = `group -em -n ($each+"VIB")`;
+        string $topGrp[] = `listRelatives -p $each`;
+        delete(`parentConstraint $topGrp[0] $vibGrp`);
+        parent $vibGrp $topGrp[0];
+        parent $each $vibGrp;
+        expression -n ($each+"_vibrate") -o $vibGrp -s ("tx = ((rand("+($each+".vMin,"+$each+".vMax")+"))*"+$each+"_vibrateNode.TxImpact)*"+$each+".Vibration;\n"+
+                                               "ty = ((rand("+($each+".vMin,"+$each+".vMax")+"))*"+$each+"_vibrateNode.TyImpact)*"+$each+".Vibration;\n"+
+                                               "tz = ((rand("+($each+".vMin,"+$each+".vMax")+"))*"+$each+"_vibrateNode.TzImpact)*"+$each+".Vibration;\n"+
+                                               "rx = ((rand("+($each+".vMin,"+$each+".vMax")+"))*"+$each+"_vibrateNode.RxImpact)*"+$each+".Vibration;\n"+
+                                               "ry = ((rand("+($each+".vMin,"+$each+".vMax")+"))*"+$each+"_vibrateNode.RyImpact)*"+$each+".Vibration;\n"+ 
+                                               "rz = ((rand("+($each+".vMin,"+$each+".vMax")+"))*"+$each+"_vibrateNode.RzImpact)*"+$each+".Vibration;");
+    }
+}
