@@ -1,3 +1,4 @@
+//============================================================================ FOR SWING
 global proc swgAttrs(){
     string $sel[]=`ls -sl`;
     for($each in $sel){
@@ -38,7 +39,7 @@ global proc swgAttrs(){
                                               "rz=(((sin((frame+"+$each+".offset)*"+$each+".speed"+""+")*"+$each+".range)+"+$each+".restPosition)*"+$vNode+".RzImpact)*"+$each+".Swing;\n");
     }
 }
-//============================================================================
+//============================================================================ FOR VIBRATE
 global proc vibAttrs(){
     string $sel[]=`ls -sl`;
     for($each in $sel){
